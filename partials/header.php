@@ -10,8 +10,8 @@
     </p>
 
     <div class="mt-4">
-      <a href="#tentang" class="btn btn-hero me-2">Pelajari Lebih Lanjut</a>
-      <a href="#produk" class="btn btn-outline-light btn-lg rounded-pill px-4">
+      <a href="tentang.php" class="btn btn-hero me-2">Pelajari Lebih Lanjut</a>
+      <a href="produk.php" class="btn btn-outline-light btn-lg rounded-pill px-4">
         Lihat Produk
       </a>
     </div>

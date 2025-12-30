@@ -13,13 +13,13 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto align-items-lg-center">
         <li class="nav-item">
-          <a class="nav-link active nav-item-custom" href="#">Home</a>
+          <a class="nav-link active nav-item-custom" href="index.php">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link nav-item-custom" href="#">Tentang</a>
+          <a class="nav-link nav-item-custom" href="tentang.php">Tentang</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link nav-item-custom" href="#">Produk</a>
+          <a class="nav-link nav-item-custom" href="produk.php">Produk</a>
         </li>
         <li class="nav-item">
           <a class="nav-link nav-item-custom" href="#">Berita</a>
