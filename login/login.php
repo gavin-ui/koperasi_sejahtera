@@ -1,26 +1,26 @@
 <?php
 session_start();
+require "../koneksi.php";
 
-// Jika sudah login, langsung ke admin
 if (isset($_SESSION['login'])) {
     header("Location: ../admin/index.php");
     exit;
 }
 
-// PROSES LOGIN
 $error = "";
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $username = $_POST['username'] ?? '';
-    $password = $_POST['password'] ?? '';
+    $username = $_POST['username'];
+    $password = $_POST['password'];
 
-    // DATA LOGIN SEMENTARA
-    $admin_user = "admin";
-    $admin_pass = "12345";
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ?");
+    $stmt->execute([$username]);
+    $user = $stmt->fetch();
 
-    if ($username === $admin_user && $password === $admin_pass) {
+    if ($user && password_verify($password, $user['password'])) {
         $_SESSION['login'] = true;
-        $_SESSION['username'] = $username;
-
+        $_SESSION['user']  = $user['username'];
+        $_SESSION['role']  = $user['role'];
         header("Location: ../admin/index.php");
         exit;
     } else {
@@ -32,162 +32,180 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <html lang="id">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Login | Agro Lumintu Sejahtera</title>
 
 <style>
-* {
-    box-sizing: border-box;
-    font-family: 'Segoe UI', sans-serif;
+:root {
+    --bg: #f4f7f6;
+    --card: #fff;
+    --text: #222;
+    --accent: #5fb878;
+}
+.dark {
+    --bg:#111;
+    --card:#1c1c1c;
+    --text:#eee;
 }
 
-body {
-    margin: 0;
-    min-height: 100vh;
-    background: linear-gradient(120deg, #e9f5ec, #f7faf9);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+*{box-sizing:border-box;font-family:'Segoe UI'}
+
+body{
+    background:var(--bg);
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin:0;
 }
 
-/* Container utama */
-.container {
-    width: 100%;
-    max-width: 1000px;
-    background: #fff;
-    border-radius: 18px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    box-shadow: 0 25px 60px rgba(0,0,0,.12);
-    overflow: hidden;
+.container{
+    width:min(100%,1000px);
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    background:var(--card);
+    border-radius:18px;
+    box-shadow:0 30px 70px rgba(0,0,0,.2);
+    overflow:hidden;
+    position:relative;
 }
 
-/* Kiri (Form) */
-.login-box {
-    padding: 60px;
+.login-box{
+    padding:50px;
 }
 
-.login-box h2 {
-    margin: 0;
-    font-size: 28px;
-    font-weight: 700;
+.login-box h2{margin:0;font-size:28px;color:var(--text)}
+.login-box p{color:#777}
+
+.back-btn{
+    position:relative;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding:12px 26px;
+    margin-bottom:30px;
+
+    border-radius:999px;
+    text-decoration:none;
+    font-size:14px;
+    font-weight:600;
+    letter-spacing:.2px;
+
+    color:#2f6f4e;
+    background:
+        linear-gradient(135deg,#ffffff,#eef8f1);
+    border:1px solid rgba(95,184,120,.35);
+
+    box-shadow:
+        0 18px 45px rgba(0,0,0,.12),
+        inset 0 1px 0 rgba(255,255,255,.8);
+
+    overflow:hidden;
+    transition:all .4s ease;
 }
 
-.login-box p {
-    color: #777;
-    margin-bottom: 35px;
+/* Shine effect */
+.back-btn .shine{
+    position:absolute;
+    inset:0;
+    background:
+        linear-gradient(
+            120deg,
+            transparent 20%,
+            rgba(255,255,255,.6),
+            transparent 80%
+        );
+    transform:translateX(-120%);
 }
 
-.form-group {
-    margin-bottom: 18px;
+/* Text */
+.back-btn .text{
+    position:relative;
+    z-index:1;
 }
 
-label {
-    display: block;
-    font-size: 14px;
-    margin-bottom: 6px;
-    color: #333;
+/* Hover */
+.back-btn:hover{
+    transform:translateY(-3px) scale(1.02);
+    box-shadow:0 30px 65px rgba(0,0,0,.18);
 }
 
-input {
-    width: 100%;
-    padding: 14px 16px;
-    border-radius: 10px;
-    border: 1px solid #ddd;
-    font-size: 15px;
-    outline: none;
+.back-btn:hover .shine{
+    transform:translateX(120%);
+    transition:transform .8s ease;
 }
 
-input:focus {
-    border-color: #5fb878;
+/* Active click */
+.back-btn:active{
+    transform:scale(.97);
 }
 
-button {
-    width: 100%;
-    margin-top: 10px;
-    padding: 14px;
-    background: linear-gradient(135deg, #5fb878, #4fa368);
-    border: none;
-    border-radius: 12px;
-    color: #fff;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: .3s;
+/* Dark mode support */
+.dark .back-btn{
+    background:linear-gradient(135deg,#1e1e1e,#2a2a2a);
+    border-color:#3e8e61;
+    color:#dff6ea;
 }
 
-button:hover {
-    opacity: .9;
+input{
+    width:100%;
+    padding:14px;
+    border-radius:10px;
+    border:1px solid #ccc;
+    margin-bottom:15px;
 }
 
-.error {
-    background: #ffe6e6;
-    color: #b10000;
-    padding: 12px;
-    border-radius: 10px;
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 14px;
+button{
+    width:100%;
+    padding:14px;
+    border:none;
+    background:linear-gradient(135deg,#5fb878,#4fa368);
+    color:#fff;
+    font-weight:600;
+    border-radius:12px;
+    cursor:pointer;
 }
 
-/* Kanan (Branding) */
-.brand {
-    background: linear-gradient(160deg, #5fb878, #3e8e61);
-    color: #fff;
-    padding: 60px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+.brand{
+    background:linear-gradient(160deg,#5fb878,#3e8e61);
+    color:#fff;
+    padding:60px;
 }
 
-.brand-logo {
-    width: 260px;
-    max-width: 100%;
-    margin-bottom: 40px;
-    filter: drop-shadow(0 22px 50px rgba(0,0,0,.5));
-    transition: transform .4s ease;
+.brand img{
+    width:220px;
+    margin-bottom:30px;
+    filter:drop-shadow(0 20px 40px rgba(0,0,0,.4));
 }
 
-.brand-logo:hover {
-    transform: scale(1.07);
+.error{
+    background:#ffe6e6;
+    padding:10px;
+    border-radius:10px;
+    margin-bottom:15px;
+    color:#b10000;
 }
 
-@media (max-width: 900px) {
-    .brand-logo {
-        width: 180px;
-        margin-bottom: 30px;
+.toggle{
+    position:absolute;
+    top:20px;
+    right:20px;
+    cursor:pointer;
+}
+
+.loading{
+    display:none;
+    text-align:center;
+    margin-top:10px;
+}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+    .container{
+        grid-template-columns:1fr;
     }
-}
-
-@media (max-width: 500px) {
-    .brand-logo {
-        width: 140px;
-        margin-bottom: 25px;
-    }
-}
-
-.brand h1 {
-    font-size: 42px;
-    margin: 0;
-    line-height: 1.2;
-}
-
-.brand span {
-    font-weight: 300;
-}
-
-.brand p {
-    margin-top: 18px;
-    font-size: 15px;
-    opacity: .9;
-}
-
-/* Responsive */
-@media(max-width: 900px) {
-    .container {
-        grid-template-columns: 1fr;
-    }
-    .brand {
-        display: none;
+    .brand{
+        text-align:center;
     }
 }
 </style>
@@ -195,39 +213,51 @@ button:hover {
 
 <body>
 
+<div class="toggle" onclick="toggleDark()">🌙</div>
+
 <div class="container">
+<div class="login-box">
 
-    <!-- FORM LOGIN -->
-    <div class="login-box">
-        <h2>Masuk</h2>
-        <p>Masukkan username dan password Anda</p>
+<!-- TOMBOL KEMBALI -->
+<a href="../index.php" class="back-btn">
+    <span class="shine"></span>
+    <span class="text">Kembali ke Beranda</span>
+</a>
 
-        <?php if ($error): ?>
-            <div class="error"><?= $error ?></div>
-        <?php endif; ?>
+<h2>Masuk</h2>
+<p>Masukkan username dan password Anda</p>
 
-        <form method="POST">
-            <div class="form-group">
-                <label>Username</label>
-                <input type="text" name="username" placeholder="Masukkan username" required>
-            </div>
+<?php if($error): ?>
+<div class="error"><?= $error ?></div>
+<?php endif ?>
 
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" name="password" placeholder="Masukkan password" required>
-            </div>
+<form method="POST" onsubmit="loading()">
+<input name="username" placeholder="Username" required>
+<input type="password" name="password" placeholder="Password" required>
+<button>Login</button>
+<div class="loading" id="load">⏳ Memproses...</div>
+</form>
 
-            <button type="submit">Login</button>
-        </form>
-    </div>
-
-    <!-- BRAND -->
-    <div class="brand">
-        <img src="assets/Screenshot_2025-12-30_094123-removebg-preview.png" class="brand-logo">
-        <h1>Agro Lumintu<br><span>Sejahtera</span></h1>
-    </div>
+<p style="margin-top:15px">
+Belum punya akun? <a href="register.php">Buat akun</a>
+</p>
 
 </div>
+
+<div class="brand">
+<img src="assets/Screenshot_2025-12-30_094123-removebg-preview.png">
+<h1>Agro Lumintu<br><span>Sejahtera</span></h1>
+</div>
+</div>
+
+<script>
+function toggleDark(){
+    document.body.classList.toggle("dark");
+}
+function loading(){
+    document.getElementById("load").style.display="block";
+}
+</script>
 
 </body>
 </html>

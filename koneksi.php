@@ -1,15 +1,16 @@
 <?php
-$host     = "localhost";
-$user     = "root";
-$password = "";
-$database = "koperasi_sejahtera";
+$host = "localhost";
+$db   = "koperasi_sejahtera";
+$user = "root";
+$pass = "";
 
-$conn = mysqli_connect($host, $user, $password, $database);
-
-if (!$conn) {
-    die("Koneksi database gagal: " . mysqli_connect_error());
+try {
+    $pdo = new PDO(
+        "mysql:host=$host;dbname=$db;charset=utf8",
+        $user,
+        $pass,
+        [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
+    );
+} catch (PDOException $e) {
+    die("Koneksi gagal");
 }
-
-// optional: hilangkan pesan error saat online
-// error_reporting(0);
-?>
