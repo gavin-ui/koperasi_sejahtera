@@ -92,7 +92,7 @@
           <img src="images/padi.jpg" class="card-img-top">
           <div class="card-body">
             <h5 class="card-title">Padi / Gabah</h5>
-            <p>Komoditas utama hasil pertanian anggota koperasi.</p>
+            <p>Padi merupakan komoditas tanaman pangan yang penting di Indonesia. Selain itu, padi juga termasuk tanaman pertanian yang berasal dari dua benua yaitu Asia dan Afrika Barat.</p>
           </div>
         </div>
       </div>
@@ -102,7 +102,7 @@
           <img src="images/cabai.jpg" class="card-img-top">
           <div class="card-body">
             <h5 class="card-title">Cabai</h5>
-            <p>Hasil panen berkualitas dengan pendampingan budidaya.</p>
+            <p>Cabai merupakan komoditas sayuran potensial yang mempunyai nilai ekonomi tinggi dan memiliki potensi untuk terus dikembangkan.</p>
           </div>
         </div>
       </div>
@@ -112,7 +112,46 @@
           <img src="images/bawang.jpg" class="card-img-top">
           <div class="card-body">
             <h5 class="card-title">Bawang Merah</h5>
-            <p>Komoditas unggulan dengan hasil yang stabil.</p>
+            <p>Bawang merah merupakan salah satu komoditas sayuran unggulan yang sejak lama telah diusahakan oleh petani secara intensif. Komoditas sayuran ini kelompok rempah</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="col-md-4">
+        <div class="card">
+          <img src="images/bawang.jpg" class="card-img-top">
+          <div class="card-body">
+            <h5 class="card-title">Kentang</h5>
+            <p>Kentang (Solanum tuberosum L) merupakan salah satu komoditas sayuran penting di Indonesia. Produksi kentang telah berkembang dengan pesat.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="col-md-4">
+        <div class="card">
+          <img src="images/bawang.jpg" class="card-img-top">
+          <div class="card-body">
+            <h5 class="card-title">Sawi</h5>
+            <p>Sawi merupakan salah satu komoditas tanaman hortikultura dari jenis sayur sayuran yang dimanfaatkan daun-daun yang masih muda.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="col-md-4">
+        <div class="card">
+          <img src="images/bawang.jpg" class="card-img-top">
+          <div class="card-body">
+            <h5 class="card-title">Tomat</h5>
+            <p>Buah tomat adalah komoditas yang multiguna, berfungsi sebagai sayuran, bumbu, masak, buah meja, bahan pewarna makanan dan obat-obatan.</p>
           </div>
         </div>
       </div>
@@ -129,7 +168,7 @@
       <div class="col-md-6">
         <div class="p-4 bg-white shadow rounded">
           <h5 class="fw-bold">Visi</h5>
-          <p>Mewujudkan kesejahteraan petani melalui koperasi yang profesional, mandiri, dan berkelanjutan.</p>
+          <p>Menjadi koperasi yang amanah dengan tujuan memajukan kesejahteraan anggota khususnya dan para petani Indonesia umumnya dengan sistem pengelolaan pertanian yang maju, mandiri dan berdaya saing berbasis ekonomi dan edukasi.</p>
         </div>
       </div>
 
@@ -137,10 +176,11 @@
         <div class="p-4 bg-white shadow rounded">
           <h5 class="fw-bold">Misi</h5>
           <ul>
-            <li>Meningkatkan pendapatan petani</li>
-            <li>Menyediakan akses pemasaran yang luas</li>
-            <li>Memberikan pendampingan dan edukasi</li>
-            <li>Mendukung kemandirian ekonomi petani</li>
+            <li>Mengembangkan dan meningkatkan potensi ekonomi anggota berbasis ekonomi dan edukasi.</li>
+            <li>Mengembangkan dan meningkatkan potensi ekonomi anggota berbasis sumber daya lokal.</li>
+            <li>Menghasilkan produk pertanian dan olahannya yang berkualitas, berdaya saing tinggi dan berwawasan lingkungan.</li>
+            <li>Menyediakan peralatan dan bahan-bahan yang dibutuhkan anggota.</li>
+            <li>Menampung hasil produksi anggota yang selanjutnya dilakukan penyempurnaan dan mendistribusikannya.</li>
           </ul>
         </div>
       </div>
