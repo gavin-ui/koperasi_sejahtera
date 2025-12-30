@@ -1,7 +1,11 @@
+<?php 
+$page = basename($_SERVER['PHP_SELF']);
+?>
+
 <nav class="navbar navbar-expand-lg fixed-top shadow-sm" style="background: linear-gradient(90deg, #0b8a34, #0f9b3f);">
   <div class="container">
     
-    <a class="navbar-brand d-flex align-items-center fw-bold text-white" href="#">
+    <a class="navbar-brand d-flex align-items-center fw-bold text-white" href="index.php">
       <img src="login/assets/Screenshot_2025-12-30_094123-removebg-preview.png" alt="Logo" style="height:40px; margin-right:10px;">
       <span style="letter-spacing: .5px;">Koperasi Sejahtera</span>
     </a>
@@ -12,29 +16,36 @@
 
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto align-items-lg-center">
+
         <li class="nav-item">
-          <a class="nav-link active nav-item-custom" href="index.php">Home</a>
+          <a class="nav-link nav-item-custom <?php echo ($page=='index.php')?'active':''; ?>" href="index.php">Home</a>
         </li>
+
         <li class="nav-item">
-          <a class="nav-link nav-item-custom" href="tentang.php">Tentang</a>
+          <a class="nav-link nav-item-custom <?php echo ($page=='tentang.php')?'active':''; ?>" href="tentang.php">Tentang</a>
         </li>
+
         <li class="nav-item">
-          <a class="nav-link nav-item-custom" href="produk.php">Produk</a>
+          <a class="nav-link nav-item-custom <?php echo ($page=='produk.php')?'active':''; ?>" href="produk.php">Produk</a>
         </li>
+
         <li class="nav-item">
-          <a class="nav-link nav-item-custom" href="#">Berita</a>
+          <a class="nav-link nav-item-custom <?php echo ($page=='berita.php')?'active':''; ?>" href="#">Berita</a>
         </li>
+
         <li class="nav-item">
-          <a class="nav-link nav-item-custom" href="#">Galeri</a>
+          <a class="nav-link nav-item-custom <?php echo ($page=='galeri.php')?'active':''; ?>" href="#">Galeri</a>
         </li>
+
         <li class="nav-item">
-          <a class="nav-link nav-item-custom" href="#">Kontak</a>
+          <a class="nav-link nav-item-custom <?php echo ($page=='kontak.php')?'active':''; ?>" href="#">Kontak</a>
         </li>
 
         <!-- Tombol Login -->
         <li class="ms-3">
           <a href="login/login.php" class="btn btn-login">Login</a>
         </li>
+
       </ul>
     </div>
   </div>
