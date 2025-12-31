@@ -4,8 +4,8 @@
     <a href="#"><i class="bi bi-speedometer"></i> Dashboard</a>
 
     <p class="mt-3 text-secondary px-3">MASTER</p>
-    <a href="#">User</a>
-    <a href="#">Gapoktan</a>
+    <a href="user.php">User</a>
+    <a href="gapoktan.php">Gapoktan</a>
     <a href="#">Mitra</a>
     <a href="#">Perusahaan</a>
     <a href="#">Kelompok</a>
