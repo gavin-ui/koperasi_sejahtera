@@ -25,7 +25,7 @@
   height: 90vh;
   background-image:
     linear-gradient(rgba(0, 80, 32, 0.7), rgba(0, 90, 35, 0.8)),
-    url('assets/img/hero.jpg');
+    url('login/assets/img/satu.jpeg');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;

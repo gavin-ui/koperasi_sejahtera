@@ -243,10 +243,10 @@
     <h3 class="section-title text-center mb-4">Galeri</h3>
 
     <div class="row g-3">
-      <div class="col-md-3"><img src="images/g1.jpg" class="img-fluid rounded"></div>
-      <div class="col-md-3"><img src="images/g2.jpg" class="img-fluid rounded"></div>
-      <div class="col-md-3"><img src="images/g3.jpg" class="img-fluid rounded"></div>
-      <div class="col-md-3"><img src="images/g4.jpg" class="img-fluid rounded"></div>
+      <div class="col-md-3"><img src="login/assets/img/dua.jpeg" class="img-fluid rounded"></div>
+      <div class="col-md-3"><img src="login/assets/img/tiga.png" class="img-fluid rounded"></div>
+      <div class="col-md-3"><img src="login/assets/img/empat.jpeg" class="img-fluid rounded"></div>
+      <div class="col-md-3"><img src="login/assets/img/lima.jpeg" class="img-fluid rounded"></div>
     </div>
   </div>
 </section>

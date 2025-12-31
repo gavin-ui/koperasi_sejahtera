@@ -34,7 +34,7 @@ $page = basename($_SERVER['PHP_SELF']);
         </li>
 
         <li class="nav-item">
-          <a class="nav-link nav-item-custom <?php echo ($page=='galeri.php')?'active':''; ?>" href="#">Galeri</a>
+          <a class="nav-link nav-item-custom <?php echo ($page=='galeri.php')?'active':''; ?>" href="galeri.php">Galeri</a>
         </li>
 
         <li class="nav-item">
