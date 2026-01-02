@@ -8,8 +8,8 @@
     <a href="gapoktan.php">Gapoktan</a>
     <a href="../admin/mitra.php">Mitra</a>
     <a href="../admin/perusahaan.php">Perusahaan</a>
-    <a href="#">Kelompok</a>
-    <a href="#">Komoditas</a>
+    <a href="kelompok.php">Kelompok</a>
+    <a href="komoditas.php">Komoditas</a>
     <a href="#">Varietas</a>
     <a href="#">Varietas Harga</a>
 
