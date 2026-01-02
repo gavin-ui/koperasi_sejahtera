@@ -6,8 +6,8 @@
     <p class="mt-3 text-secondary px-3">MASTER</p>
     <a href="user.php">User</a>
     <a href="gapoktan.php">Gapoktan</a>
-    <a href="#">Mitra</a>
-    <a href="#">Perusahaan</a>
+    <a href="../admin/mitra.php">Mitra</a>
+    <a href="../admin/perusahaan.php">Perusahaan</a>
     <a href="#">Kelompok</a>
     <a href="#">Komoditas</a>
     <a href="#">Varietas</a>
