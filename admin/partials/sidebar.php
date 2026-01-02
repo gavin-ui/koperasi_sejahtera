@@ -6,11 +6,11 @@
     <p class="mt-3 text-secondary px-3">MASTER</p>
     <a href="user.php">User</a>
     <a href="gapoktan.php">Gapoktan</a>
-    <a href="../admin/mitra.php">Mitra</a>
-    <a href="../admin/perusahaan.php">Perusahaan</a>
+    <a href="mitra.php">Mitra</a>
+    <a href="perusahaan.php">Perusahaan</a>
     <a href="kelompok.php">Kelompok</a>
     <a href="komoditas.php">Komoditas</a>
-    <a href="#">Varietas</a>
+    <a href="varietas.php">Varietas</a>
     <a href="#">Varietas Harga</a>
 
     <p class="mt-3 text-secondary px-3">MANAJEMEN</p>
