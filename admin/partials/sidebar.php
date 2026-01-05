@@ -1,22 +1,85 @@
 <div class="sidebar">
-    <h5 class="text-center mb-4">AGRO LUMINTU</h5>
 
-    <a href="#"><i class="bi bi-speedometer"></i> Dashboard</a>
+  <!-- BRAND -->
+  <div class="brand">
+    AGRO LUMINTU SEJAHTERA
+  </div>
 
-    <p class="mt-3 text-secondary px-3">MASTER</p>
-    <a href="user.php">User</a>
-    <a href="gapoktan.php">Gapoktan</a>
-    <a href="../admin/mitra.php">Mitra</a>
-    <a href="../admin/perusahaan.php">Perusahaan</a>
-    <a href="kelompok.php">Kelompok</a>
-    <a href="komoditas.php">Komoditas</a>
-    <a href="#">Varietas</a>
-    <a href="#">Varietas Harga</a>
+  <!-- DASHBOARD -->
+  <a href="index.php">
+    <i class="bi bi-speedometer2"></i>
+    Dashboard
+  </a>
 
-    <p class="mt-3 text-secondary px-3">MANAJEMEN</p>
-    <a href="#">Manajemen P2</a>
-    <a href="#">Manajemen Q2CP</a>
-    <a href="#">Manajemen P3GB</a>
-    <a href="#">Manajemen P4</a>
-    <a href="#">Manajemen Transaksi</a>
+  <!-- MASTER -->
+  <div class="menu-section">MASTER</div>
+
+  <a href="user.php">
+    <i class="bi bi-people"></i>
+    User
+  </a>
+
+  <a href="gapoktan.php">
+    <i class="bi bi-diagram-3"></i>
+    Gapoktan
+  </a>
+
+  <a href="mitra.php">
+    <i class="bi bi-person-badge"></i>
+    Mitra
+  </a>
+
+  <a href="../admin/perusahaan.php">
+    <i class="bi bi-building"></i>
+    Perusahaan
+  </a>
+
+  <a href="kelompok.php">
+    <i class="bi bi-layers"></i>
+    Kelompok
+  </a>
+
+  <a href="komoditas.php">
+    <i class="bi bi-box-seam"></i>
+    Komoditas
+  </a>
+
+  <a href="#">
+    <i class="bi bi-tags"></i>
+    Varietas
+  </a>
+
+  <a href="#">
+    <i class="bi bi-cash-coin"></i>
+    Varietas Harga
+  </a>
+
+  <!-- MANAJEMEN -->
+  <div class="menu-section">MANAJEMEN</div>
+
+  <a href="#">
+    <i class="bi bi-kanban"></i>
+    Manajemen P2
+  </a>
+
+  <a href="#">
+    <i class="bi bi-clipboard-data"></i>
+    Manajemen Q2CP
+  </a>
+
+  <a href="#">
+    <i class="bi bi-diagram-2"></i>
+    Manajemen P3GB
+  </a>
+
+  <a href="#">
+    <i class="bi bi-stack"></i>
+    Manajemen P4
+  </a>
+
+  <a href="#">
+    <i class="bi bi-receipt"></i>
+    Manajemen Transaksi
+  </a>
+
 </div>
