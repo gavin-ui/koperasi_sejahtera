@@ -4,16 +4,16 @@ include "../koneksi.php";
 /* ================= TAMBAH ================= */
 if (isset($_POST['tambah'])) {
 
-    $ktp_file = '';
+    $ktp_file = null;
     if (!empty($_FILES['ktp_file']['name'])) {
         $ktp_file = time().'_'.$_FILES['ktp_file']['name'];
-        move_uploaded_file($_FILES['ktp_file']['tmp_name'], "../upload/ktp/".$ktp_file);
+        move_uploaded_file($_FILES['ktp_file']['tmp_name'], __DIR__."/uploads/".$ktp_file);
     }
 
-    $kartu_tani_file = '';
+    $kartu_tani_file = null;
     if (!empty($_FILES['kartu_tani_file']['name'])) {
         $kartu_tani_file = time().'_'.$_FILES['kartu_tani_file']['name'];
-        move_uploaded_file($_FILES['kartu_tani_file']['tmp_name'], "../upload/kartu_tani/".$kartu_tani_file);
+        move_uploaded_file($_FILES['kartu_tani_file']['tmp_name'], __DIR__."/uploads/".$kartu_tani_file);
     }
 
     $stmt = $pdo->prepare("INSERT INTO mitra 
@@ -43,13 +43,13 @@ if (isset($_POST['edit'])) {
     $ktp_file = $_POST['ktp_lama'];
     if (!empty($_FILES['ktp_file']['name'])) {
         $ktp_file = time().'_'.$_FILES['ktp_file']['name'];
-        move_uploaded_file($_FILES['ktp_file']['tmp_name'], "../upload/ktp/".$ktp_file);
+        move_uploaded_file($_FILES['ktp_file']['tmp_name'], __DIR__."/uploads/".$ktp_file);
     }
 
     $kartu_tani_file = $_POST['kartu_tani_lama'];
     if (!empty($_FILES['kartu_tani_file']['name'])) {
         $kartu_tani_file = time().'_'.$_FILES['kartu_tani_file']['name'];
-        move_uploaded_file($_FILES['kartu_tani_file']['tmp_name'], "../upload/kartu_tani/".$kartu_tani_file);
+        move_uploaded_file($_FILES['kartu_tani_file']['tmp_name'], __DIR__."/uploads/".$kartu_tani_file);
     }
 
     $stmt = $pdo->prepare("UPDATE mitra SET
@@ -90,582 +90,505 @@ if (isset($_GET['hapus'])) {
     exit;
 }
 
-/* ================= DATA ================= */
-$data = $pdo->query("SELECT * FROM mitra ORDER BY created_at DESC")->fetchAll();
-
-/* ================= PAGINATION ================= */
+/* ================= PAGINATION + SEARCH ================= */
 $limit = 10;
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-$page = $page < 1 ? 1 : $page;
+$page = max(1, (int)($_GET['page'] ?? 1));
 $offset = ($page - 1) * $limit;
 
-$search = isset($_GET['search']) ? trim($_GET['search']) : '';
+$search = trim($_GET['search'] ?? '');
 $where = '';
 $params = [];
 
-if ($search != '') {
-    $where = "WHERE 
-        nama_mitra LIKE :search OR
-        alamat LIKE :search OR
-        no_ktp LIKE :search OR
-        no_kartu_tani LIKE :search OR
-        bank LIKE :search OR
-        nama_rekening LIKE :search OR
-        no_rekening LIKE :search OR
-        keterangan LIKE :search
-    ";
-    $params[':search'] = "%$search%";
+if ($search) {
+    $where = "WHERE nama_mitra LIKE :s OR alamat LIKE :s OR no_ktp LIKE :s";
+    $params[':s'] = "%$search%";
 }
 
-/* total data */
 $stmt = $pdo->prepare("SELECT COUNT(*) FROM mitra $where");
 $stmt->execute($params);
 $totalData = $stmt->fetchColumn();
 $totalPage = ceil($totalData / $limit);
 
-/* data per halaman */
-$stmt = $pdo->prepare("
-    SELECT * FROM mitra
-    $where
-    ORDER BY created_at DESC
-    LIMIT :limit OFFSET :offset
-");
-
-foreach ($params as $key => $val) {
-    $stmt->bindValue($key, $val);
-}
-
-$stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
-$stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+$stmt = $pdo->prepare("SELECT * FROM mitra $where ORDER BY created_at DESC LIMIT :l OFFSET :o");
+foreach ($params as $k => $v) $stmt->bindValue($k, $v);
+$stmt->bindValue(':l', $limit, PDO::PARAM_INT);
+$stmt->bindValue(':o', $offset, PDO::PARAM_INT);
 $stmt->execute();
 $data = $stmt->fetchAll();
+
+include "partials/header.php";
+include "partials/sidebar.php";
 ?>
 
-<?php include "partials/header.php"; ?>
-<?php include "partials/sidebar.php"; ?>
-
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
-
-<style>
-    /* ================= GLOBAL ================= */
-*{
-    box-sizing:border-box;
-    font-family:'Segoe UI',sans-serif;
-}
-
-body{
-    background:#f4f6f9;
-}
-
-/* ================= CONTENT ================= */
-.content-wrapper{
-    margin-left:260px;
-    padding:30px;
-}
-
-h2{
-    margin-bottom:20px;
-    font-size:22px;
-}
-
-/* ================= TOP BAR ================= */
-.top-bar{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:15px;
-    gap:10px;
-}
-
-.search{
-    width:260px;
-    padding:10px 14px;
-    border-radius:8px;
-    border:1px solid #ddd;
-    outline:none;
-}
-
-.search:focus{
-    border-color:#2d8cff;
-}
-
-/* ================= BUTTON ================= */
-.btn{
-    padding:10px 18px;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-    font-weight:600;
-}
-
-.btn-add{
-    background:#2d8cff;
-    color:#fff;
-}
-
-.btn-add:hover{
-    opacity:.9;
-}
-
-/* ================= TABLE ================= */
-table{
-    width:100%;
-    border-collapse:collapse;
-    background:#fff;
-    border-radius:12px;
-    overflow:hidden;
-    box-shadow:0 10px 30px rgba(0,0,0,.08);
-}
-
-th,td{
-    padding:14px;
-    text-align:left;
-    font-size:14px;
-}
-
-th{
-    background:#f1f4f8;
-    font-weight:600;
-}
-
-tr:nth-child(even){
-    background:#fafafa;
-}
-
-.action a{
-    margin-right:10px;
-    text-decoration:none;
-    font-size:18px;
-    cursor:pointer;
-}
-
-.action a:hover{
-    opacity:.7;
-}
-
-/* ================= MODAL ================= */
-.modal{
-    display:none;
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,.4);
-    z-index:999;
-    align-items:center;
-    justify-content:center;
-}
-
-.modal-content{
-    background:#fff;
-    width:480px;
-    max-height:90vh;
-    overflow-y:auto;
-    padding:25px;
-    border-radius:14px;
-    animation:zoom .25s ease;
-}
-
-@keyframes zoom{
-    from{transform:scale(.8);opacity:0}
-    to{transform:scale(1);opacity:1}
-}
-
-.modal h3{
-    margin-top:0;
-    margin-bottom:15px;
-}
-
-/* ================= FORM ================= */
-.modal input,
-.modal textarea,
-.modal select{
-    width:100%;
-    padding:11px 13px;
-    margin-bottom:12px;
-    border-radius:8px;
-    border:1px solid #ddd;
-    font-size:14px;
-}
-
-.modal textarea{
-    resize:none;
-    min-height:70px;
-}
-
-.modal input:focus,
-.modal textarea:focus,
-.modal select:focus{
-    border-color:#2d8cff;
-    outline:none;
-}
-
-/* ================= FILE INPUT ================= */
-.modal label{
-    font-size:13px;
-    font-weight:600;
-    margin-bottom:5px;
-    display:block;
-}
-
-/* ================= MODAL BUTTON ================= */
-.modal button{
-    width:100%;
-    margin-top:5px;
-    padding:12px;
-    border-radius:8px;
-    border:none;
-    cursor:pointer;
-    font-weight:600;
-}
-
-.modal button[type="button"]{
-    background:#eee;
-    margin-top:8px;
-}
-
-.modal button[type="button"]:hover{
-    background:#ddd;
-}
-
-/* ================= SELECT2 ================= */
-.select2-container--default .select2-selection--single{
-    height:42px;
-    border-radius:8px;
-    border:1px solid #ddd;
-}
-
-.select2-selection__rendered{
-    line-height:42px !important;
-}
-
-.select2-selection__arrow{
-    height:42px !important;
-}
-
-/* ================= RESPONSIVE ================= */
-@media(max-width:768px){
-    .content-wrapper{
-        margin-left:0;
-        padding:20px;
-    }
-
-    .top-bar{
-        flex-direction:column;
-        align-items:flex-start;
-    }
-
-    .search{
-        width:100%;
-    }
-
-    .modal-content{
-        width:95%;
-    }
-}
-
-html, body {
-    height: 100%;
-}
-
-body {
-    display: flex;
-    flex-direction: column;
-}
-
-.wrapper,
-.main-wrapper,
-.content {
-    flex: 1;
-}
-
-/* jika tidak ada wrapper khusus, pakai content-wrapper */
-.content-wrapper {
-    flex: 1;
-}
-
-.pagination{
-    margin-top:20px;
-    display:flex;
-    justify-content:center;
-    gap:8px;
-}
-
-.pagination a{
-    padding:8px 14px;
-    border-radius:8px;
-    border:1px solid #ddd;
-    text-decoration:none;
-    color:#333;
-    font-weight:600;
-    background:#fff;
-    transition:.2s;
-}
-
-.pagination a:hover{
-    background:#2d8cff;
-    color:#fff;
-    border-color:#2d8cff;
-}
-
-.pagination a.active{
-    background:#2d8cff;
-    color:#fff;
-    border-color:#2d8cff;
-}
-</style>
 <div class="content-wrapper">
-
 <h2>Data Mitra</h2>
 
 <div class="top-bar">
-    <form method="GET">
-        <input type="hidden" name="page" value="1">
-
-        <input 
-            class="search" 
-            name="search" 
-            placeholder="Cari mitra..."
-            value="<?= htmlspecialchars($search ?? '') ?>"
-        >
-    </form>
-    <button class="btn btn-add" onclick="openTambah()">+ Tambah Mitra</button>
+<form>
+<input type="hidden" name="page" value="1">
+<input class="search" name="search" placeholder="Cari mitra..." value="<?= htmlspecialchars($search) ?>">
+</form>
+<button class="btn btn-add" onclick="openTambah()">+ Tambah Mitra</button>
 </div>
 
-<table id="table">
-<tr>
-    <th>No</th>
-    <th>Nama Mitra</th>
-    <th>Tanggal</th>
-    <th>Aksi</th>
-</tr>
-
+<table>
+<tr><th>No</th><th>Nama</th><th>Tanggal</th><th>Aksi</th></tr>
 <?php foreach ($data as $i => $m): ?>
 <tr>
-    <td 
-        class="no" 
-        data-original-no="<?= ($page - 1) * $limit + $i + 1 ?>"
-    >
-        <?= ($page - 1) * $limit + $i + 1 ?>
-    </td>
-    <td><?= $m['nama_mitra'] ?></td>
-    <td><?= date('d-m-Y', strtotime($m['created_at'])) ?></td>
-    <td class="action">
-        <a href="#" onclick='detail(<?= json_encode($m) ?>)'>👁</a>
-        <a href="#" onclick='editData(<?= json_encode($m) ?>)'>✏</a>
-        <a href="?hapus=<?= $m['id_mitra'] ?>" onclick="return confirm('Hapus data ini?')">🗑</a>
-    </td>
+<td><?= ($page-1)*$limit+$i+1 ?></td>
+<td><?= $m['nama_mitra'] ?></td>
+<td><?= date('d-m-Y', strtotime($m['created_at'])) ?></td>
+<td>
+<a onclick='detail(<?= json_encode($m) ?>)'>👁</a>
+<a onclick='editData(<?= json_encode($m) ?>)'>✏</a>
+<a href="?hapus=<?= $m['id_mitra'] ?>" onclick="return confirm('Hapus data ini?')">🗑</a>
+</td>
 </tr>
 <?php endforeach ?>
-
 </table>
-<?php if ($totalPage > 1): ?>
+
 <div class="pagination">
-<?php for ($i = 1; $i <= $totalPage; $i++): ?>
-    <a 
-        href="?page=<?= $i ?>&search=<?= urlencode($search) ?>"
-        class="<?= $i == $page ? 'active' : '' ?>"
-    >
-        <?= $i ?>
-    </a>
-<?php endfor; ?>
+<?php for($i=1;$i<=$totalPage;$i++): ?>
+<a class="<?= $i==$page?'active':'' ?>" href="?page=<?= $i ?>&search=<?= urlencode($search) ?>"><?= $i ?></a>
+<?php endfor ?>
 </div>
-<?php endif; ?>
 </div>
 
-<!-- ================= MODAL ================= -->
+<!-- MODAL TAMBAH / EDIT -->
 <div class="modal" id="modal">
-<div class="modal-content">
+<div class="modal-content wide">
 <h3 id="modalTitle"></h3>
-
 <form method="POST" id="form" enctype="multipart/form-data">
-
 <input type="hidden" name="id" id="id">
 <input type="hidden" name="ktp_lama" id="ktp_lama">
 <input type="hidden" name="kartu_tani_lama" id="kartu_tani_lama">
 
+<div class="grid-2">
 <input name="nama_mitra" id="nama_mitra" placeholder="Nama Mitra" required>
-<textarea name="alamat" id="alamat" placeholder="Alamat"></textarea>
 <input name="no_ktp" id="no_ktp" placeholder="No KTP">
 <input name="no_kartu_tani" id="no_kartu_tani" placeholder="No Kartu Tani">
-
-<select name="bank" id="bank" required>
-<option value="">Pilih Bank</option>
-<option>BANK BRI</option>
-<option>BANK MANDIRI</option>
-<option>BANK BNI</option>
-<option>BANK BTN</option>
-<option>BANK BCA</option>
-<option>BANK BSI</option>
-<option>BANK CIMB NIAGA</option>
-<option>BANK DANAMON</option>
-<option>PERMATA BANK</option>
-<option>BANK MAYBANK</option>
-<option>BANK PANIN</option>
-<option>BANK OCBC NISP</option>
-<option>BANK UOB</option>
-<option>BANK MEGA</option>
-<option>BANK JATENG</option>
-<option>BANK JATIM</option>
-<option>BANK DKI</option>
-<option>BANK JABAR BANTEN</option>
-<option>BANK ACEH</option>
-<option>BANK NTB</option>
-<option>BANK NTT</option>
-<option>BANK PAPUA</option>
-</select>
-
+<select name="bank" id="bank"><option value="">Pilih Bank</option><option>BANK BRI</option><option>BANK BCA</option></select>
 <input name="nama_rekening" id="nama_rekening" placeholder="Nama Rekening">
 <input name="no_rekening" id="no_rekening" placeholder="No Rekening">
-<textarea name="keterangan" id="keterangan" placeholder="Keterangan"></textarea>
-
-<!-- ✅ INPUT YANG DIKEMBALIKAN -->
-<label>Upload KTP</label>
 <input type="file" name="ktp_file">
-
-<label>Upload Kartu Tani</label>
 <input type="file" name="kartu_tani_file">
+</div>
+
+<textarea name="alamat" id="alamat" placeholder="Alamat"></textarea>
+<textarea name="keterangan" id="keterangan" placeholder="Keterangan"></textarea>
 
 <button class="btn btn-add" id="btnSubmit"></button>
 <button type="button" onclick="closeModal()">Batal</button>
-
 </form>
 </div>
 </div>
-<!-- ================= MODAL DETAIL ================= -->
+
+<!-- MODAL DETAIL -->
 <div class="modal" id="modalDetail">
-<div class="modal-content">
-<h3>Detail Mitra</h3>
+  <div class="modal-content wide">
+    <h3>Detail Mitra</h3>
 
-<table style="width:100%;font-size:14px">
-<tr><td><b>Nama</b></td><td id="d_nama"></td></tr>
-<tr><td><b>Alamat</b></td><td id="d_alamat"></td></tr>
-<tr><td><b>No KTP</b></td><td id="d_ktp"></td></tr>
-<tr><td><b>No Kartu Tani</b></td><td id="d_kartu_tani"></td></tr>
-<tr><td><b>Bank</b></td><td id="d_bank"></td></tr>
-<tr><td><b>Nama Rekening</b></td><td id="d_nama_rek"></td></tr>
-<tr><td><b>No Rekening</b></td><td id="d_no_rek"></td></tr>
-<tr><td><b>Keterangan</b></td><td id="d_ket"></td></tr>
-</table>
+    <div class="grid-2">
+      <input id="d_nama" readonly placeholder="Nama Mitra">
+      <input id="d_bank" readonly placeholder="Bank">
+      <input id="d_no_rek" readonly placeholder="No Rekening">
 
-<button type="button" onclick="closeDetail()">Tutup</button>
+      <textarea id="d_alamat" readonly placeholder="Alamat"></textarea>
+      <textarea id="d_keterangan" readonly placeholder="Keterangan"></textarea>
+    </div>
+
+    <!-- FOTO -->
+    <div class="grid-2 mt-3">
+      <div class="photo-box">
+        <label>Foto KTP</label>
+        <a id="ktp_link" target="_blank">
+          <img id="d_ktp" class="photo-preview" alt="Foto KTP">
+        </a>
+        <small id="ktp_empty" class="text-muted"></small>
+      </div>
+
+      <div class="photo-box">
+        <label>Foto Kartu Tani</label>
+        <a id="kartu_link" target="_blank">
+          <img id="d_kartu" class="photo-preview" alt="Foto Kartu Tani">
+        </a>
+        <small id="kartu_empty" class="text-muted"></small>
+      </div>
+    </div>
+
+    <div style="text-align:right;margin-top:20px">
+      <button onclick="closeDetail()">Tutup</button>
+    </div>
+  </div>
 </div>
-</div>
+
+<script>
+function openTambah(){
+modal.style.display='flex';
+form.reset();
+modalTitle.innerText='Tambah Mitra';
+btnSubmit.innerText='Simpan';
+btnSubmit.name='tambah';
+}
+function editData(d){
+openTambah();
+modalTitle.innerText='Edit Mitra';
+btnSubmit.innerText='Update';
+btnSubmit.name='edit';
+Object.keys(d).forEach(k=>{ if(document.getElementById(k)) document.getElementById(k).value=d[k];});
+ktp_lama.value=d.ktp_file;
+kartu_tani_lama.value=d.kartu_tani_file;
+}
+function detail(d){
+  modalDetail.style.display='flex';
+
+  d_nama.value = d.nama_mitra;
+  d_bank.value = d.bank;
+  d_no_rek.value = d.no_rekening;
+  d_alamat.value = d.alamat;
+  d_keterangan.value = d.keterangan;
+
+  // FOTO KTP
+  if(d.ktp_file){
+    d_ktp.src = "uploads/" + d.ktp_file;
+    ktp_link.href = "uploads/" + d.ktp_file;
+    d_ktp.style.display = 'block';
+    ktp_empty.innerText = '';
+  }else{
+    d_ktp.style.display = 'none';
+    ktp_empty.innerText = 'Tidak ada foto KTP';
+  }
+
+  // FOTO KARTU TANI
+  if(d.kartu_tani_file){
+    d_kartu.src = "uploads/" + d.kartu_tani_file;
+    kartu_link.href = "uploads/" + d.kartu_tani_file;
+    d_kartu.style.display = 'block';
+    kartu_empty.innerText = '';
+  }else{
+    d_kartu.style.display = 'none';
+    kartu_empty.innerText = 'Tidak ada foto Kartu Tani';
+  }
+}
+</script>
 
 <?php include "partials/footer.php"; ?>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<style>
+/* =================================================
+   MITRA PREMIUM UI – FINAL FIX (MATCH GAPOKTAN)
+================================================= */
 
-<script>
-/* =========================
-   SELECT2 BANK
-========================= */
-$(document).ready(function () {
-    $('#bank').select2({
-        width: '100%',
-        placeholder: 'Pilih Bank'
-    });
-});
-
-/* =========================
-   MODAL TAMBAH
-========================= */
-function openTambah(){
-    document.getElementById('modal').style.display = 'flex';
-    document.getElementById('modalTitle').innerText = 'Tambah Mitra';
-
-    document.getElementById('form').reset();
-
-    document.getElementById('btnSubmit').innerText = 'Simpan';
-    document.getElementById('btnSubmit').name = 'tambah';
-
-    document.getElementById('id').value = '';
-    document.getElementById('ktp_lama').value = '';
-    document.getElementById('kartu_tani_lama').value = '';
-
-    $('#bank').val('').trigger('change');
+/* ===== LAYOUT ===== */
+.mitra-content,
+.content-wrapper{
+  margin-left:260px;
+  padding:100px 30px 40px;
+  background:linear-gradient(180deg,#f4f7fb,#eef2f7);
+  min-height:100vh;
 }
 
-/* =========================
-   TUTUP MODAL TAMBAH / EDIT
-========================= */
-function closeModal(){
-    document.getElementById('modal').style.display = 'none';
+@media(max-width:991px){
+  .mitra-content,
+  .content-wrapper{
+    margin-left:0;
+    padding:90px 16px 30px;
+  }
 }
 
-/* =========================
-   MODAL EDIT
-========================= */
-function editData(data){
-    document.getElementById('modal').style.display = 'flex';
-    document.getElementById('modalTitle').innerText = 'Edit Mitra';
-
-    document.getElementById('btnSubmit').innerText = 'Update';
-    document.getElementById('btnSubmit').name = 'edit';
-
-    document.getElementById('id').value = data.id_mitra;
-    document.getElementById('nama_mitra').value = data.nama_mitra;
-    document.getElementById('alamat').value = data.alamat;
-    document.getElementById('no_ktp').value = data.no_ktp;
-    document.getElementById('no_kartu_tani').value = data.no_kartu_tani;
-    document.getElementById('nama_rekening').value = data.nama_rekening;
-    document.getElementById('no_rekening').value = data.no_rekening;
-    document.getElementById('keterangan').value = data.keterangan;
-
-    document.getElementById('ktp_lama').value = data.ktp_file;
-    document.getElementById('kartu_tani_lama').value = data.kartu_tani_file;
-
-    $('#bank').val(data.bank).trigger('change');
+/* ===== PAGE TITLE ===== */
+.content-wrapper h2{
+  font-size:28px;
+  font-weight:800;
+  color:#0f172a;
+  letter-spacing:.3px;
 }
 
-/* =========================
-   MODAL DETAIL
-========================= */
-function detail(data){
-    document.getElementById('modalDetail').style.display = 'flex';
-
-    document.getElementById('d_nama').innerText = data.nama_mitra || '-';
-    document.getElementById('d_alamat').innerText = data.alamat || '-';
-    document.getElementById('d_ktp').innerText = data.no_ktp || '-';
-    document.getElementById('d_kartu_tani').innerText = data.no_kartu_tani || '-';
-    document.getElementById('d_bank').innerText = data.bank || '-';
-    document.getElementById('d_nama_rek').innerText = data.nama_rekening || '-';
-    document.getElementById('d_no_rek').innerText = data.no_rekening || '-';
-    document.getElementById('d_ket').innerText = data.keterangan || '-';
+/* ===== TOP BAR ===== */
+.top-bar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin:25px 0 30px;
+  gap:14px;
+  flex-wrap:wrap;
 }
 
-function closeDetail(){
-    document.getElementById('modalDetail').style.display = 'none';
+/* ===== SEARCH ===== */
+.search{
+  border-radius:14px;
+  padding:12px 14px;
+  border:1px solid #e2e8f0;
+  min-width:240px;
+  transition:.3s;
 }
 
-/* =========================
-   SEARCH SERVER-SIDE (DATABASE)
-   - Cari ke semua data
-   - Reset ke page 1
-   - Nomor TIDAK RUSAK
-========================= */
-const searchInput = document.querySelector('input[name="search"]');
-
-if (searchInput) {
-    let delayTimer;
-
-    searchInput.addEventListener('keyup', function () {
-        clearTimeout(delayTimer);
-
-        delayTimer = setTimeout(() => {
-            const form = this.form;
-
-            // pastikan selalu ke halaman 1 saat search
-            let pageInput = form.querySelector('input[name="page"]');
-            if (!pageInput) {
-                pageInput = document.createElement('input');
-                pageInput.type = 'hidden';
-                pageInput.name = 'page';
-                form.appendChild(pageInput);
-            }
-
-            pageInput.value = 1;
-            form.submit();
-        }, 500); // delay 0.5 detik
-    });
+.search:focus{
+  outline:none;
+  border-color:#22c55e;
+  box-shadow:0 0 0 4px rgba(34,197,94,.2);
 }
-</script>
+
+/* ===== BUTTON ADD ===== */
+.btn-add{
+  background:linear-gradient(135deg,#16a34a,#22c55e);
+  color:#fff;
+  border:none;
+  border-radius:999px;
+  padding:10px 26px;
+  font-weight:700;
+  letter-spacing:.3px;
+  box-shadow:0 8px 20px rgba(34,197,94,.35);
+  transition:.3s;
+}
+
+.btn-add:hover{
+  transform:translateY(-1px);
+  box-shadow:0 12px 30px rgba(34,197,94,.45);
+}
+
+/* ===== TABLE ===== */
+table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0 12px;
+}
+
+table th{
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  color:#64748b;
+  padding:8px 14px;
+  text-align:left;
+}
+
+table td{
+  background:#ffffff;
+  padding:14px 16px;
+  border:none;
+  vertical-align:middle;
+}
+
+table tr{
+  box-shadow:0 8px 25px rgba(15,23,42,.06);
+  border-radius:16px;
+  transition:.3s;
+}
+
+table tr:hover{
+  transform:translateY(-2px);
+  box-shadow:0 12px 35px rgba(15,23,42,.12);
+}
+
+/* ===== ACTION ICON ===== */
+td a{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:38px;
+  height:38px;
+  background:#f1f5f9;
+  border-radius:12px;
+  text-decoration:none;
+  font-size:16px;
+  margin-right:6px;
+  transition:.3s;
+}
+
+td a:nth-child(1){ color:#16a34a; }
+td a:nth-child(2){ color:#2563eb; }
+td a:nth-child(3){ color:#dc2626; }
+
+td a:nth-child(1):hover{ background:#dcfce7; }
+td a:nth-child(2):hover{ background:#dbeafe; }
+td a:nth-child(3):hover{ background:#fee2e2; }
+
+/* ===== PAGINATION ===== */
+.pagination{
+  display:flex;
+  justify-content:center;
+  margin-top:30px;
+  gap:6px;
+}
+
+.pagination a{
+  border:none;
+  border-radius:12px;
+  padding:8px 14px;
+  color:#475569;
+  font-weight:600;
+  text-decoration:none;
+  background:#f1f5f9;
+}
+
+.pagination a.active{
+  background:linear-gradient(135deg,#16a34a,#22c55e);
+  color:#fff;
+  box-shadow:0 6px 18px rgba(34,197,94,.45);
+}
+
+/* =================================================
+   MODAL PREMIUM – TAMBAH / EDIT / DETAIL
+================================================= */
+
+/* ===== OVERLAY ===== */
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,.55);
+  z-index:999;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+}
+
+/* ===== MODAL BOX ===== */
+.modal-content{
+  background:#ffffff;
+  border-radius:22px;
+  width:100%;
+  max-width:820px;
+  box-shadow:0 25px 60px rgba(15,23,42,.3);
+  overflow:hidden;
+  animation:fadeUp .3s ease;
+}
+
+/* ===== MODAL HEADER ===== */
+.modal-content h3{
+  margin:0;
+  padding:16px 24px;
+  font-size:18px;
+  font-weight:800;
+  color:#ffffff;
+  background:linear-gradient(135deg,#16a34a,#22c55e);
+  letter-spacing:.4px;
+}
+
+/* ===== MODAL BODY (LANDSCAPE GRID) ===== */
+.modal-content form{
+  padding:22px 24px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px 18px;
+}
+
+/* Full width */
+.modal-content .modal-full,
+.modal-content textarea,
+.modal-content label{
+  grid-column:1 / -1;
+}
+
+/* ===== LABEL ===== */
+.modal-content label{
+  font-size:13px;
+  font-weight:600;
+  color:#334155;
+}
+
+/* ===== INPUT ===== */
+.modal-content input,
+.modal-content textarea,
+.modal-content select{
+  width:100%;
+  border-radius:12px;
+  padding:10px 13px;
+  border:1px solid #e2e8f0;
+  font-size:14px;
+}
+
+.modal-content textarea{
+  resize:none;
+  min-height:80px;
+}
+
+.modal-content input:focus,
+.modal-content textarea:focus,
+.modal-content select:focus{
+  outline:none;
+  border-color:#22c55e;
+  box-shadow:0 0 0 3px rgba(34,197,94,.18);
+}
+
+/* ===== BUTTON AREA ===== */
+.modal-content button{
+  border:none;
+  border-radius:999px;
+  padding:10px 24px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.modal-content button[type="submit"],
+#btnSubmit{
+  background:linear-gradient(135deg,#16a34a,#22c55e);
+  color:#fff;
+  box-shadow:0 6px 16px rgba(34,197,94,.35);
+}
+
+.modal-content button[type="button"]{
+  background:#e5e7eb;
+  color:#334155;
+}
+
+/* ===== ANIMATION ===== */
+@keyframes fadeUp{
+  from{
+    opacity:0;
+    transform:translateY(25px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+/* ===== MOBILE ===== */
+@media(max-width:768px){
+  .modal-content{
+    max-width:100%;
+  }
+  .modal-content form{
+    grid-template-columns:1fr;
+  }
+}
+.grid-2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+
+.wide{
+  max-width:900px;
+}
+
+.photo-box{
+  background:#f8fafc;
+  padding:14px;
+  border-radius:14px;
+  text-align:center;
+}
+
+.photo-box label{
+  font-size:13px;
+  font-weight:700;
+  color:#334155;
+  display:block;
+  margin-bottom:8px;
+}
+
+.photo-preview{
+  width:100%;
+  max-height:220px;
+  object-fit:contain;
+  border-radius:12px;
+  box-shadow:0 6px 18px rgba(0,0,0,.15);
+}
+
+.text-muted{
+  color:#94a3b8;
+  font-size:12px;
+}
+</style>
