@@ -167,7 +167,31 @@ include "partials/sidebar.php";
 <input name="nama_mitra" id="nama_mitra" placeholder="Nama Mitra" required>
 <input name="no_ktp" id="no_ktp" placeholder="No KTP">
 <input name="no_kartu_tani" id="no_kartu_tani" placeholder="No Kartu Tani">
-<select name="bank" id="bank"><option value="">Pilih Bank</option><option>BANK BRI</option><option>BANK BCA</option></select>
+<select name="bank" id="bank" required>
+<option value="">Pilih Bank</option>
+<option>BANK BRI</option>
+<option>BANK MANDIRI</option>
+<option>BANK BNI</option>
+<option>BANK BTN</option>
+<option>BANK BCA</option>
+<option>BANK BSI</option>
+<option>BANK CIMB NIAGA</option>
+<option>BANK DANAMON</option>
+<option>PERMATA BANK</option>
+<option>BANK MAYBANK</option>
+<option>BANK PANIN</option>
+<option>BANK OCBC NISP</option>
+<option>BANK UOB</option>
+<option>BANK MEGA</option>
+<option>BANK JATENG</option>
+<option>BANK JATIM</option>
+<option>BANK DKI</option>
+<option>BANK JABAR BANTEN</option>
+<option>BANK ACEH</option>
+<option>BANK NTB</option>
+<option>BANK NTT</option>
+<option>BANK PAPUA</option>
+</select>
 <input name="nama_rekening" id="nama_rekening" placeholder="Nama Rekening">
 <input name="no_rekening" id="no_rekening" placeholder="No Rekening">
 <input type="file" name="ktp_file">
