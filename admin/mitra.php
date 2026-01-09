@@ -120,6 +120,10 @@ include "partials/header.php";
 include "partials/sidebar.php";
 ?>
 
+<script>
+const BASE_UPLOAD = "<?= dirname($_SERVER['PHP_SELF']) ?>/uploads/";
+</script>
+
 <div class="content-wrapper">
 <h2>Data Mitra</h2>
 
@@ -194,8 +198,15 @@ include "partials/sidebar.php";
 </select>
 <input name="nama_rekening" id="nama_rekening" placeholder="Nama Rekening">
 <input name="no_rekening" id="no_rekening" placeholder="No Rekening">
-<input type="file" name="ktp_file">
-<input type="file" name="kartu_tani_file">
+<div>
+  <label>Upload Foto KTP</label>
+  <input type="file" name="ktp_file">
+</div>
+
+<div>
+  <label>Upload Foto Kartu Tani</label>
+  <input type="file" name="kartu_tani_file">
+</div>
 </div>
 
 <textarea name="alamat" id="alamat" placeholder="Alamat"></textarea>
@@ -264,34 +275,59 @@ ktp_lama.value=d.ktp_file;
 kartu_tani_lama.value=d.kartu_tani_file;
 }
 function detail(d){
-  modalDetail.style.display='flex';
+  modalDetail.style.display = 'flex';
 
-  d_nama.value = d.nama_mitra;
-  d_bank.value = d.bank;
-  d_no_rek.value = d.no_rekening;
-  d_alamat.value = d.alamat;
+  d_nama.value       = d.nama_mitra;
+  d_bank.value       = d.bank;
+  d_no_rek.value     = d.no_rekening;
+  d_alamat.value     = d.alamat;
   d_keterangan.value = d.keterangan;
 
-  // FOTO KTP
+  /* ========= FOTO KTP ========= */
   if(d.ktp_file){
-    d_ktp.src = "uploads/" + d.ktp_file;
-    ktp_link.href = "uploads/" + d.ktp_file;
+    const ktp = encodeURIComponent(d.ktp_file);
+
     d_ktp.style.display = 'block';
+    d_ktp.src = BASE_UPLOAD + ktp;
+    ktp_link.href = BASE_UPLOAD + ktp;
     ktp_empty.innerText = '';
   }else{
     d_ktp.style.display = 'none';
     ktp_empty.innerText = 'Tidak ada foto KTP';
   }
 
-  // FOTO KARTU TANI
+  /* ======== FOTO KARTU TANI ======== */
   if(d.kartu_tani_file){
-    d_kartu.src = "uploads/" + d.kartu_tani_file;
-    kartu_link.href = "uploads/" + d.kartu_tani_file;
+    const kartu = encodeURIComponent(d.kartu_tani_file);
+
     d_kartu.style.display = 'block';
+    d_kartu.src = BASE_UPLOAD + kartu;
+    kartu_link.href = BASE_UPLOAD + kartu;
     kartu_empty.innerText = '';
   }else{
     d_kartu.style.display = 'none';
     kartu_empty.innerText = 'Tidak ada foto Kartu Tani';
+  }
+}
+</script>
+
+<script>
+/* ================= CLOSE MODAL ================= */
+function closeModal(){
+  document.getElementById('modal').style.display = 'none';
+}
+
+function closeDetail(){
+  document.getElementById('modalDetail').style.display = 'none';
+}
+
+/* ===== CLOSE JIKA KLIK AREA GELAP ===== */
+window.onclick = function(e){
+  if(e.target === document.getElementById('modal')){
+    closeModal();
+  }
+  if(e.target === document.getElementById('modalDetail')){
+    closeDetail();
   }
 }
 </script>
@@ -470,24 +506,37 @@ td a:nth-child(3):hover{ background:#fee2e2; }
 
 /* ===== MODAL BOX ===== */
 .modal-content{
-  background:#ffffff;
+  background:
+    linear-gradient(180deg,#ffffff,#f8fafc);
   border-radius:22px;
   width:100%;
   max-width:820px;
-  box-shadow:0 25px 60px rgba(15,23,42,.3);
-  overflow:hidden;
-  animation:fadeUp .3s ease;
+  box-shadow:
+    0 30px 80px rgba(15,23,42,.35),
+    inset 0 1px 0 rgba(255,255,255,.7);
+  overflow:visible;   /* ✅ WAJIB */
+}
+
+#modalDetail .modal-content h3{
+  min-height:72px;
+  padding-top:26px;
+  padding-bottom:26px;
+  align-items:center;
 }
 
 /* ===== MODAL HEADER ===== */
 .modal-content h3{
   margin:0;
-  padding:16px 24px;
-  font-size:18px;
+  padding:22px 28px;     /* ⬅ tambah padding */
+  font-size:20px;        /* ⬅ lebih proporsional */
   font-weight:800;
   color:#ffffff;
   background:linear-gradient(135deg,#16a34a,#22c55e);
   letter-spacing:.4px;
+  line-height:1.4;       /* ⬅ PENTING */
+  min-height:64px;       /* ⬅ PENTING */
+  display:flex;
+  align-items:center;    /* ⬅ judul selalu di tengah vertikal */
 }
 
 /* ===== MODAL BODY (LANDSCAPE GRID) ===== */
@@ -574,6 +623,10 @@ td a:nth-child(3):hover{ background:#fee2e2; }
   .modal-content{
     max-width:100%;
   }
+  .modal-content{
+     overflow:visible;   /* ⬅ BIAR HEADER AMAN */
+  }
+
   .modal-content form{
     grid-template-columns:1fr;
   }
@@ -614,5 +667,221 @@ td a:nth-child(3):hover{ background:#fee2e2; }
 .text-muted{
   color:#94a3b8;
   font-size:12px;
+}
+
+.modal{
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: overlayFade .25s ease;
+}
+
+@keyframes overlayFade{
+  from{ opacity:0 }
+  to{ opacity:1 }
+}
+
+.modal-content{
+  background:
+    linear-gradient(180deg,#ffffff,#f8fafc);
+  border:1px solid rgba(255,255,255,.6);
+  box-shadow:
+    0 30px 80px rgba(15,23,42,.35),
+    inset 0 1px 0 rgba(255,255,255,.7);
+}
+
+.modal-content h3{
+  position:relative;
+  overflow:hidden;
+}
+
+.modal-content h3::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(
+      120deg,
+      rgba(255,255,255,.35),
+      transparent 60%
+    );
+}
+
+.modal-content input,
+.modal-content textarea,
+.modal-content select{
+  background:#f8fafc;
+  transition:.25s;
+}
+
+.modal-content input:hover,
+.modal-content textarea:hover,
+.modal-content select:hover{
+  background:#ffffff;
+}
+
+.modal-content input:focus,
+.modal-content textarea:focus,
+.modal-content select:focus{
+  background:#ffffff;
+  transform:translateY(-1px);
+}
+
+.modal-content button{
+  transition:.25s;
+}
+
+.modal-content button[type="submit"],
+#btnSubmit{
+  position:relative;
+  overflow:hidden;
+}
+
+.modal-content button[type="submit"]::after,
+#btnSubmit::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(
+      120deg,
+      rgba(255,255,255,.4),
+      transparent 70%
+    );
+  opacity:0;
+  transition:.3s;
+}
+
+.modal-content button[type="submit"]:hover::after,
+#btnSubmit:hover::after{
+  opacity:1;
+}
+
+.modal-content button[type="submit"]:hover{
+  transform:translateY(-1px);
+  box-shadow:0 10px 26px rgba(34,197,94,.55);
+}
+
+.modal-content button[type="button"]:hover{
+  background:#d1d5db;
+}
+
+@keyframes fadeUp{
+  from{
+    opacity:0;
+    transform:translateY(30px) scale(.97);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0) scale(1);
+  }
+}
+
+.photo-preview{
+  background:#fff;
+  transition:.3s;
+}
+
+.photo-preview:hover{
+  transform:scale(1.03);
+  box-shadow:0 14px 40px rgba(15,23,42,.25);
+}
+
+.modal-content form{
+  row-gap:22px;   /* jarak vertikal */
+  column-gap:24px; /* jarak horizontal */
+}
+
+.modal-content input,
+.modal-content select{
+  height:46px;
+}
+
+.modal-content textarea{
+  min-height:110px;
+  line-height:1.6;
+}
+
+.modal-content form button{
+  margin-top:10px;
+}
+
+.modal-content form{
+  padding-bottom:26px;
+}
+
+#modalDetail .grid-2{
+  gap:22px;
+}
+
+#modalDetail input,
+#modalDetail textarea{
+  background:#f1f5f9;
+  border-color:#e2e8f0;
+}
+
+.modal-content form::before{
+  content:"";
+  grid-column:1 / -1;
+  height:1px;
+  background:linear-gradient(to right, transparent, #e2e8f0, transparent);
+  margin-bottom:6px;
+}
+
+#modalDetail .modal-content{
+  padding-bottom:24px; /* jarak bawah */
+}
+
+#modalDetail .modal-content > *:not(h3){
+  padding-left:28px;
+  padding-right:28px;
+}
+
+#modalDetail .grid-2{
+  margin-top:20px;
+  gap:24px;
+}
+
+#modalDetail input,
+#modalDetail textarea{
+  padding:14px 16px;
+  border-radius:14px;
+}
+
+#modalDetail .photo-box{
+  margin-top:6px;
+}
+
+#modalDetail button{
+  margin-right:20px;
+  margin-bottom:6px;
+}
+
+/* INPUT 2 KOLOM LEBIH PANJANG & SEIMBANG */
+.modal-content .grid-2 input,
+.modal-content .grid-2 select{
+  height:52px;
+  padding:14px 18px;
+  font-size:15px;
+}
+
+.modal-content .grid-2{
+  row-gap:26px;
+  column-gap:26px;
+}
+
+.photo-preview{
+  display:block;              /* 🔥 INI KUNCI */
+  width:100%;
+  min-height:180px;           /* pastikan area ada */
+  object-fit:contain;
+  background:#fff;
+}
+
+.photo-preview{
+  display:block;
+  width:100%;
+  min-height:180px;
+  object-fit:contain;
+  background:#fff;
 }
 </style>
