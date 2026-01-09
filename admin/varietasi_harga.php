@@ -60,143 +60,6 @@ $varietas   = $pdo->query("SELECT * FROM tb_varietas")->fetchAll();
 <?php include "partials/header.php"; ?>
 <?php include "partials/sidebar.php"; ?>
 
-<style> 
-    /* === FIX LAYOUT UTAMA === */
-body {
-    margin: 0;
-    background: #f5f6fa;
-}
-
-/* Sidebar tetap di kiri */
-.sidebar {
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 260px;
-    height: 100vh;
-    z-index: 1000;
-}
-
-/* Konten utama */
-.main-wrapper {
-    margin-left: 260px;  /* HARUS SAMA dengan lebar sidebar */
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
-
-/* Isi halaman */
-.content-area {
-    flex: 1;
-    padding: 25px;
-}
-
-/* Footer selalu di bawah */
-footer {
-    margin-top: auto;
-    background: #fff;
-    padding: 15px;
-    text-align: center;
-    border-top: 1px solid #ddd;
-}
-
-/* Table */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: #fff;
-}
-
-th, td {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-}
-
-/* Modal */
-.modal {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,.4);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-}
-
-.modal-box {
-    background: #fff;
-    padding: 20px;
-    width: 450px;
-    border-radius: 8px;
-}
-
-/* === CENTER SEMUA KONTEN === */
-.main-wrapper {
-    margin-left: 260px;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-/* konten utama */
-.content,
-.content-area {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-/* tabel */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    text-align: center;
-}
-
-th, td {
-    text-align: center;
-    vertical-align: middle;
-}
-
-/* tombol di tengah */
-.btn {
-    margin: 2px;
-}
-
-/* header judul */
-h2 {
-    text-align: center;
-}
-
-/* modal center */
-.modal {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.4);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-}
-
-.modal-box {
-    background: #fff;
-    width: 450px;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: left;
-}
-
-/* form rapi */
-.modal-box input,
-.modal-box select {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
-}
-</style>
-
 <!-- ================= CONTENT WRAPPER ================= -->
 <div style="
     margin-left:260px;   /* SESUAIKAN dengan lebar sidebar kamu */
@@ -281,29 +144,43 @@ h2 {
     <div class="modal-box">
         <h3 id="modalTitle">Tambah Data</h3>
 
-        <form method="POST">
+        <form method="POST" class="modal-form">
             <input type="hidden" name="aksi" id="aksi">
             <input type="hidden" name="id" id="id">
 
-            <label>Perusahaan</label>
-            <select name="perusahaan_id" id="perusahaan" required>
-                <?php foreach($perusahaan as $p): ?>
-                <option value="<?= $p['id_perusahaan'] ?>"><?= $p['nama_perusahaan'] ?></option>
-                <?php endforeach ?>
-            </select>
+            <!-- PERUSAHAAN -->
+            <div class="form-group">
+                <label>Perusahaan</label>
+                <select name="perusahaan_id" id="perusahaan" required>
+                    <?php foreach($perusahaan as $p): ?>
+                    <option value="<?= $p['id_perusahaan'] ?>">
+                        <?= $p['nama_perusahaan'] ?>
+                    </option>
+                    <?php endforeach ?>
+                </select>
+            </div>
 
-            <label>Varietas</label>
-            <select name="varietas_id" id="varietas" required>
-                <?php foreach($varietas as $v): ?>
-                <option value="<?= $v['id'] ?>"><?= $v['nama_varietas'] ?></option>
-                <?php endforeach ?>
-            </select>
+            <!-- VARIETAS -->
+            <div class="form-group">
+                <label>Varietas</label>
+                <select name="varietas_id" id="varietas" required>
+                    <?php foreach($varietas as $v): ?>
+                    <option value="<?= $v['id'] ?>">
+                        <?= $v['nama_varietas'] ?>
+                    </option>
+                    <?php endforeach ?>
+                </select>
+            </div>
 
-            <label>Harga</label>
-            <input type="number" name="harga" id="harga" required>
+            <!-- HARGA -->
+            <div class="form-group">
+                <label>Harga</label>
+                <input type="number" name="harga" id="harga" placeholder="Masukkan harga" required>
+            </div>
 
-            <div style="margin-top:15px; text-align:right">
-                <button type="button" class="btn btn-secondary" onclick="closeModal()">Batal</button>
+            <!-- ACTION -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" onclick="closeModal()">Batal</button>
                 <button type="submit" class="btn btn-primary">Simpan</button>
             </div>
         </form>
@@ -311,16 +188,30 @@ h2 {
 </div>
 
 <!-- MODAL DETAIL -->
+<!-- MODAL DETAIL -->
 <div class="modal" id="modalDetail">
     <div class="modal-box">
         <h3>Detail Varietas</h3>
 
-        <p><b>Perusahaan:</b> <span id="d_perusahaan"></span></p>
-        <p><b>Varietas:</b> <span id="d_varietas"></span></p>
-        <p><b>Harga:</b> <span id="d_harga"></span></p>
+        <div class="detail-list">
+            <div class="detail-item">
+                <span class="detail-label">Perusahaan</span>
+                <span class="detail-value" id="d_perusahaan"></span>
+            </div>
 
-        <div style="margin-top:15px;text-align:right;">
-            <button class="btn btn-secondary" onclick="closeDetail()">Tutup</button>
+            <div class="detail-item">
+                <span class="detail-label">Varietas</span>
+                <span class="detail-value" id="d_varietas"></span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Harga</span>
+                <span class="detail-value price" id="d_harga"></span>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn btn-light" onclick="closeDetail()">Tutup</button>
         </div>
     </div>
 </div>
@@ -384,3 +275,451 @@ function hapusData(id){
     }
 }
 </script>
+
+<style> 
+/* ===============================
+   BASE
+================================ */
+body{
+  margin:0;
+  font-family: "Inter", "Segoe UI", sans-serif;
+  background:linear-gradient(180deg,#f4f7fb,#eef2f7);
+}
+
+/* ===============================
+   SIDEBAR
+================================ */
+.sidebar{
+  position:fixed;
+  inset:0 auto 0 0;
+  width:260px;
+  background:#020617;
+  z-index:1000;
+}
+
+/* ===============================
+   MAIN WRAPPER
+================================ */
+.main-wrapper{
+  margin-left:260px;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+
+/* ===============================
+   CONTENT AREA
+================================ */
+.content-area{
+  flex:1;
+  padding:100px 36px 40px;
+}
+
+@media(max-width:991px){
+  .main-wrapper{
+    margin-left:0;
+  }
+  .content-area{
+    padding:90px 18px 30px;
+  }
+}
+
+/* ===============================
+   CARD CONTAINER
+================================ */
+.card-admin{
+  background:#ffffff;
+  border-radius:28px;
+  padding:32px;
+  box-shadow:0 25px 55px rgba(15,23,42,.08);
+}
+
+/* ===============================
+   PAGE HEADER
+================================ */
+h2{
+  margin:0;
+  font-size:30px;
+  font-weight:800;
+  color:#020617;
+  letter-spacing:.3px;
+  text-align:center;
+}
+
+/* ===============================
+   TOP BAR
+================================ */
+.top-bar{
+  margin:28px 0 26px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:14px;
+}
+
+/* ===============================
+   BUTTON
+================================ */
+.btn{
+  padding:12px 26px;
+  border:none;
+  border-radius:999px;
+  font-weight:700;
+  cursor:pointer;
+  transition:.3s;
+}
+
+.btn-primary{
+  background:linear-gradient(135deg,#22c55e,#16a34a);
+  color:#fff;
+  box-shadow:0 10px 24px rgba(34,197,94,.4);
+}
+
+.btn-primary:hover{
+  transform:translateY(-2px);
+  box-shadow:0 16px 35px rgba(34,197,94,.45);
+}
+
+.btn-light{
+  background:#f1f5f9;
+  color:#020617;
+}
+
+/* ===============================
+   TABLE PREMIUM
+================================ */
+.table-responsive{
+  width:100%;
+  overflow:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0 14px;
+  text-align:center;
+}
+
+thead th{
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  color:#64748b;
+  padding:10px 14px;
+}
+
+tbody tr{
+  background:#fff;
+  border-radius:20px;
+  box-shadow:0 8px 22px rgba(15,23,42,.06);
+  transition:.3s;
+}
+
+tbody tr:hover{
+  transform:translateY(-3px);
+  box-shadow:0 16px 40px rgba(15,23,42,.12);
+}
+
+tbody td{
+  padding:16px 18px;
+  font-size:14px;
+  color:#020617;
+  border:none;
+  vertical-align:middle;
+}
+
+/* ===============================
+   ACTION BUTTON
+================================ */
+.action-btn{
+  border:none;
+  width:38px;
+  height:38px;
+  border-radius:12px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  background:#f1f5f9;
+  font-size:16px;
+  cursor:pointer;
+  transition:.25s;
+}
+
+.action-edit{
+  color:#2563eb;
+}
+
+.action-edit:hover{
+  background:#dbeafe;
+}
+
+.action-delete{
+  color:#dc2626;
+}
+
+.action-delete:hover{
+  background:#fee2e2;
+}
+
+/* ===============================
+   MODAL PREMIUM
+================================ */
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(2,6,23,.75); /* lebih gelap */
+  backdrop-filter: blur(4px);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:99999;
+}
+.modal-box{
+  background:#ffffff;
+  width:100%;
+  max-width:520px;
+  border-radius:26px;
+  padding:28px;
+  box-shadow:
+    0 40px 80px rgba(15,23,42,.45);
+  animation:modalZoom .35s ease;
+}
+.modal-premium{
+  background:#ffffff;
+  width:100%;
+  max-width:520px;
+  border-radius:28px;
+  overflow:hidden;
+  box-shadow:0 30px 70px rgba(15,23,42,.35);
+}
+.modal-box h3{
+  margin:0 0 18px;
+  font-size:22px;
+  font-weight:800;
+  color:#020617;
+  text-align:center;
+}
+
+
+/* ===============================
+   MODAL HEADER
+================================ */
+.modal-header{
+  background:linear-gradient(135deg,#22c55e,#16a34a);
+  padding:20px 28px;
+  color:#fff;
+}
+
+.modal-header h3{
+  margin:0;
+  font-weight:800;
+  letter-spacing:.4px;
+}
+
+/* ===============================
+   MODAL BODY
+================================ */
+.modal-body{
+  padding:28px;
+}
+
+.modal-body label{
+  font-size:13px;
+  font-weight:700;
+  color:#334155;
+  margin-bottom:6px;
+}
+
+/* ===============================
+   INPUT
+================================ */
+.modal-body input,
+.modal-body select{
+  width:100%;
+  border-radius:16px;
+  padding:12px 16px;
+  border:1px solid #e2e8f0;
+  font-size:14px;
+  margin-bottom:16px;
+  transition:.3s;
+}
+
+.modal-body input:focus,
+.modal-body select:focus{
+  outline:none;
+  border-color:#22c55e;
+  box-shadow:0 0 0 4px rgba(34,197,94,.2);
+}
+
+/* ===============================
+   MODAL FOOTER
+================================ */
+.modal-footer{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  padding:0 28px 26px;
+}
+
+/* ===============================
+   FOOTER
+================================ */
+footer{
+  background:#ffffff;
+  border-top:1px solid #e2e8f0;
+  padding:14px;
+  text-align:center;
+  font-size:13px;
+  color:#64748b;
+}
+
+/* ===============================
+   FORM GRID
+================================ */
+.modal-form{
+  display:grid;
+  gap:14px;
+}
+
+/* ===============================
+   FORM GROUP
+================================ */
+.form-group{
+  display:flex;
+  flex-direction:column;
+}
+
+/* ===============================
+   INPUT & SELECT PREMIUM
+================================ */
+.modal-body input,
+.modal-body select,
+.modal-body textarea{
+  width:100%;
+  border-radius:16px;
+  padding:13px 16px;
+  border:1px solid #e2e8f0;
+  font-size:14px;
+  background:#f8fafc;
+  transition:.3s;
+}
+
+.modal-body textarea{
+  resize:none;
+  min-height:90px;
+}
+
+.modal-body input:focus,
+.modal-body select:focus,
+.modal-body textarea:focus{
+  outline:none;
+  border-color:#22c55e;
+  background:#fff;
+  box-shadow:0 0 0 4px rgba(34,197,94,.2);
+}
+
+.modal-form label{
+  font-size:12px;
+  font-weight:800;
+  color:#475569;
+  text-transform:uppercase;
+  letter-spacing:.4px;
+}
+
+.modal-form input,
+.modal-form select{
+  width:100%;
+  padding:13px 16px;
+  border-radius:14px;
+  border:1px solid #e2e8f0;
+  background:#f8fafc;
+  font-size:14px;
+  transition:.3s;
+}
+
+.modal-form input:focus,
+.modal-form select:focus{
+  outline:none;
+  background:#fff;
+  border-color:#22c55e;
+  box-shadow:0 0 0 4px rgba(34,197,94,.25);
+}
+
+/* ===============================
+   MODAL DETAIL (READ ONLY)
+================================ */
+.modal-detail input,
+.modal-detail textarea{
+  background:#f1f5f9;
+  border:1px dashed #cbd5e1;
+  color:#334155;
+}
+
+.modal-detail input:focus,
+.modal-detail textarea:focus{
+  box-shadow:none;
+  border-color:#cbd5e1;
+}
+
+/* ===============================
+   MODAL FOOTER BUTTON
+================================ */
+.modal-footer{
+  display:flex;
+  justify-content:center;
+  gap:14px;
+  margin-top:20px;
+}
+
+.modal-footer .btn{
+  min-width:130px;
+}
+
+/* ===============================
+   MODAL ANIMATION
+================================ */
+.modal{
+  animation:fadeIn .3s ease;
+}
+
+.modal-premium{
+  animation:scaleUp .35s ease;
+}
+
+@keyframes fadeIn{
+  from{opacity:0}
+  to{opacity:1}
+}
+
+@keyframes scaleUp{
+  from{
+    transform:scale(.92);
+    opacity:0;
+  }
+  to{
+    transform:scale(1);
+    opacity:1;
+  }
+}
+@keyframes modalZoom{
+  from{
+    transform:scale(.92);
+    opacity:0;
+  }
+  to{
+    transform:scale(1);
+    opacity:1;
+  }
+}
+
+/* ===============================
+   MOBILE FORM
+================================ */
+@media(max-width:576px){
+  .form-grid{
+    grid-template-columns:1fr;
+  }
+}
+</style>
