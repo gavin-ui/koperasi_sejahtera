@@ -57,7 +57,7 @@
   <!-- MANAJEMEN -->
   <div class="menu-section">MANAJEMEN</div>
 
-  <a href="#">
+  <a href="manajemenp2.php">
     <i class="bi bi-kanban"></i>
     Manajemen P2
   </a>
