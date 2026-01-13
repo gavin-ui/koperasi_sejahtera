@@ -88,180 +88,6 @@ include "partials/sidebar.php";
 <title>Manajemen P2</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<style>
-/* ===== ROOT & BODY (NO SCROLL PAGE) ===== */
-html, body {
-    height: 100%;
-    overflow: hidden; /* ⛔ matikan scroll halaman */
-}
-
-body {
-    background: #f4f6f9;
-    margin: 0;
-    font-family: "Segoe UI", Roboto, Arial, sans-serif;
-}
-
-/* ===== MAIN CONTENT ===== */
-.main-content {
-    margin-left: 260px;            /* lebar sidebar */
-    padding: 24px;
-    height: calc(100vh - 60px);    /* pas 1 layar */
-    overflow: hidden;              /* ⛔ no scroll di konten utama */
-}
-
-/* ===== CARD ===== */
-.card {
-    height: 100%;
-    border: none;
-    border-radius: 16px;
-    display: flex;
-    flex-direction: column;
-}
-
-/* ===== CARD BODY ===== */
-.card-body {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-/* ===== PAGE TITLE ===== */
-.page-title {
-    font-weight: 600;
-    color: #2c3e50;
-}
-
-/* ===== TABLE WRAPPER (SCROLL DALAM TABEL SAJA) ===== */
-.table-wrapper {
-    background: #ffffff;
-    border-radius: 14px;
-    padding: 12px;
-    box-shadow: 0 8px 20px rgba(0,0,0,.06);
-    flex: 1;
-    overflow: auto;  /* ✅ scroll hanya di tabel */
-}
-
-/* ===== TABLE ===== */
-.table {
-    margin-bottom: 0;
-    border-collapse: separate;
-    border-spacing: 0;
-}
-
-.table thead th {
-    position: sticky;
-    top: 0;
-    z-index: 2;
-    background: linear-gradient(135deg,#4e73df,#224abe);
-    color: #fff;
-    text-align: center;
-    border: none;
-    padding: 14px;
-    font-size: 14px;
-}
-
-.table tbody td {
-    padding: 12px;
-    font-size: 14px;
-    vertical-align: middle;
-    border-top: 1px solid #eee;
-}
-
-.table tbody tr {
-    transition: all .15s ease;
-}
-
-.table tbody tr:hover {
-    background: #f1f4ff;
-}
-
-/* ===== BUTTON ===== */
-.btn {
-    border-radius: 8px;
-    font-size: 13px;
-    padding: 6px 12px;
-}
-
-.btn-info    { background:#36b9cc; border:none }
-.btn-warning { background:#f6c23e; border:none }
-.btn-danger  { background:#e74a3b; border:none }
-.btn-primary { background:#4e73df; border:none }
-
-.btn:hover {
-    opacity: .9;
-}
-
-/* ===== MODAL (TETAP BOLEH SCROLL) ===== */
-.modal-body {
-    max-height: calc(100vh - 200px);
-    overflow-y: auto;
-}
-
-/* ===== RESPONSIVE ===== */
-@media (max-width: 991px) {
-    html, body {
-        overflow: auto; /* mobile tetap boleh scroll */
-    }
-
-    .main-content {
-        margin-left: 0;
-        height: auto;
-        overflow: visible;
-        padding: 16px;
-    }
-
-    .card {
-        height: auto;
-    }
-
-    .table-wrapper {
-        overflow: auto;
-    }
-}
-body {
-    display: flex;
-    flex-direction: column;
-}
-
-/* area konten utama */
-.main-content {
-    flex: 1;
-    margin-left: 260px;
-    padding: 24px;
-    overflow: hidden;
-}
-
-.footer {
-    margin-left: 260px;                  /* sejajar konten */
-    width: calc(100% - 260px);           /* ⬅ ini kuncinya */
-    background: #fff;
-    border-top: 1px solid #e5e5e5;
-    padding: 12px 0;
-    
-    display: flex;
-    align-items: center;
-    justify-content: center;              /* 🎯 CENTER REAL */
-    
-    font-size: 13px;
-    color: #666;
-}
-/* ===== FIX MODAL AGAR TIDAK NABRAK SIDEBAR ===== */
-.modal {
-    padding-left: 260px !important; /* dorong modal ke kanan */
-}
-
-.modal-dialog {
-    margin: 1.75rem auto;
-}
-
-/* ===== RESPONSIVE (MOBILE) ===== */
-@media (max-width: 991px) {
-    .modal {
-        padding-left: 0 !important;
-    }
-}
-
-</style>
 
 </head>
 <body>
@@ -630,3 +456,253 @@ $('#e_mitra').on('change', function(){
 </html>
 
 <?php include "partials/footer.php"; ?>
+
+
+<style>
+/* ======================================================
+   GAPOKTAN PREMIUM DASHBOARD (SYNC VERSION)
+====================================================== */
+
+/* ===== ROOT & BODY ===== */
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    font-family: "Segoe UI", Roboto, Arial, sans-serif;
+    background: linear-gradient(180deg,#f4f7fb,#eef2f7);
+    display: flex;
+    flex-direction: column;
+}
+
+/* ======================================================
+   MAIN CONTENT (AMAN SIDEBAR & HEADER)
+====================================================== */
+.main-content {
+    flex: 1;
+    margin-left: 260px;
+    padding: 100px 30px 40px;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+/* RESPONSIVE */
+@media (max-width: 991px) {
+    .main-content {
+        margin-left: 0;
+        padding: 90px 16px 30px;
+        overflow: visible;
+    }
+}
+
+/* ======================================================
+   CARD PREMIUM
+====================================================== */
+.card {
+    background: #ffffff;
+    border: none;
+    border-radius: 22px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    box-shadow:
+        0 10px 30px rgba(15,23,42,.08),
+        inset 0 1px 0 rgba(255,255,255,.6);
+}
+
+.card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ======================================================
+   PAGE TITLE
+====================================================== */
+.page-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: .3px;
+}
+
+/* ======================================================
+   TABLE WRAPPER (SCROLL DALAM)
+====================================================== */
+.table-wrapper {
+    flex: 1;
+    margin-top: 16px;
+    padding: 14px;
+    background: #ffffff;
+    border-radius: 18px;
+    overflow: auto;
+    box-shadow: 0 8px 25px rgba(15,23,42,.06);
+}
+
+/* ======================================================
+   TABLE PREMIUM FLOATING
+====================================================== */
+.table {
+    margin-bottom: 0;
+    border-collapse: separate;
+    border-spacing: 0 12px;
+}
+
+.table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #64748b;
+    background: transparent;
+    border: none;
+    text-align: center;
+    padding: 10px 14px;
+}
+
+.table tbody tr {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(15,23,42,.06);
+    transition: .3s;
+}
+
+.table tbody tr:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 35px rgba(15,23,42,.12);
+}
+
+.table tbody td {
+    border: none;
+    padding: 14px 16px;
+    font-size: 14px;
+    vertical-align: middle;
+    text-align: center;
+}
+
+/* ======================================================
+   BUTTON PREMIUM
+====================================================== */
+.btn {
+    border: none;
+    border-radius: 999px;
+    font-size: 13px;
+    padding: 6px 16px;
+    font-weight: 600;
+    transition: .3s;
+}
+
+/* PRIMARY (HIJAU GAPOKTAN) */
+.btn-primary {
+    background: linear-gradient(135deg,#16a34a,#22c55e);
+    color: #fff;
+    box-shadow: 0 6px 18px rgba(34,197,94,.35);
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 28px rgba(34,197,94,.45);
+}
+
+/* INFO */
+.btn-info {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+.btn-info:hover {
+    background: #bfdbfe;
+}
+
+/* WARNING */
+.btn-warning {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+.btn-warning:hover {
+    background: #fde68a;
+}
+
+/* DANGER */
+.btn-danger {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.btn-danger:hover {
+    background: #fecaca;
+}
+
+/* ======================================================
+   MODAL PREMIUM
+====================================================== */
+.modal {
+    padding-left: 260px !important;
+}
+
+.modal-dialog {
+    margin: 1.75rem auto;
+}
+
+.modal-content {
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: 0 25px 60px rgba(15,23,42,.3);
+}
+
+.modal-header {
+    background: linear-gradient(135deg,#16a34a,#22c55e);
+    color: #fff;
+    border: none;
+    padding: 18px 26px;
+}
+
+.modal-header h5 {
+    font-weight: 800;
+    letter-spacing: .5px;
+}
+
+.modal-body {
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+}
+
+.modal-footer {
+    padding: 16px 26px;
+    border-top: none;
+}
+
+/* RESPONSIVE MODAL */
+@media (max-width: 991px) {
+    .modal {
+        padding-left: 0 !important;
+    }
+}
+
+/* ======================================================
+   FOOTER (CENTER REAL)
+====================================================== */
+.footer {
+    margin-left: 260px;
+    width: calc(100% - 260px);
+    background: #ffffff;
+    border-top: 1px solid #e5e7eb;
+    padding: 12px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: #64748b;
+}
+
+@media (max-width: 991px) {
+    .footer {
+        margin-left: 0;
+        width: 100%;
+    }
+}
+</style>

@@ -1,171 +1,135 @@
 <?php
-// header global admin
+// header global admin (HEADER ONLY)
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
 <meta charset="UTF-8">
 <title>Dashboard Admin</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Bootstrap -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-<!-- Icon -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-
-<!-- Chart JS -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
 <style>
+/* ===============================
+   HEADER ADMIN (FINAL)
+================================ */
 :root{
-  --primary:#4f46e5;
-  --dark:#0b1226;
-  --dark-soft:#111a3a;
-  --accent:#22c55e;
-  --text:#cbd5e1;
+  --primary:#16a34a;
+  --dark:#0f172a;
+  --border:#e5e7eb;
 }
 
-/* GLOBAL */
 body{
-  background:linear-gradient(180deg,#f6f8fd,#eef2ff);
+  margin:0;
   font-family:'Inter',system-ui,-apple-system;
-  overflow-x:hidden;
 }
 
-/* =====================
-   SIDEBAR
-===================== */
-.sidebar{
-  width:260px;
-  height:100vh;
-  position:fixed;
-  left:0;
-  top:0;
-  background:linear-gradient(180deg,#0b1226,#111a3a);
-  color:#fff;
-  padding:20px 0;
-  overflow-y:auto;
-  scrollbar-width:thin;
-  scrollbar-color:#4f46e5 transparent;
-  box-shadow:8px 0 30px rgba(0,0,0,.25);
-  z-index:999;
-}
-
-/* Custom Scrollbar */
-.sidebar::-webkit-scrollbar{
-  width:6px;
-}
-.sidebar::-webkit-scrollbar-thumb{
-  background:#4f46e5;
-  border-radius:10px;
-}
-.sidebar::-webkit-scrollbar-track{
-  background:transparent;
-}
-
-/* Logo / Title */
-.sidebar .brand{
-  text-align:center;
-  font-size:20px;
-  font-weight:700;
-  letter-spacing:1px;
-  margin-bottom:25px;
-  color:#fff;
-}
-
-/* Menu */
-.sidebar a{
-  color:var(--text);
-  text-decoration:none;
-  display:flex;
-  align-items:center;
-  gap:12px;
-  padding:12px 22px;
-  margin:4px 12px;
-  border-radius:12px;
-  transition:.35s ease;
-  font-weight:500;
-}
-
-/* Icon */
-.sidebar a i{
-  font-size:18px;
-  min-width:22px;
-}
-
-/* Hover */
-.sidebar a:hover{
-  background:linear-gradient(135deg,#4f46e5,#6366f1);
-  color:#fff;
-  transform:translateX(6px);
-  box-shadow:0 8px 25px rgba(79,70,229,.35);
-}
-
-/* Active Menu (jika mau) */
-.sidebar a.active{
-  background:linear-gradient(135deg,#22c55e,#16a34a);
-  color:#fff;
-}
-
-/* =====================
-   HEADER
-===================== */
+/* HEADER */
 .header{
   position:fixed;
-  left:260px;
   top:0;
+  left:var(--sidebar-width);
   right:0;
-  height:70px;
-  background:rgba(255,255,255,.85);
-  backdrop-filter:blur(12px);
-  box-shadow:0 10px 30px rgba(0,0,0,.08);
+  height:72px;
+  background:rgba(255,255,255,.95);
+  backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--border);
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding:0 30px;
-  z-index:998;
+  padding:0 28px;
+  z-index:1000;
+  transition:.35s ease;
 }
 
-/* Header Title */
-.header h5{
-  margin:0;
-  font-weight:700;
-  color:#1e293b;
-}
-
-/* User Info */
-.header .user{
+/* LEFT */
+.header-left{
   display:flex;
   align-items:center;
-  gap:12px;
+  gap:14px;
 }
 
-.header .user img{
+.header-toggle{
+  width:42px;
+  height:42px;
+  border-radius:14px;
+  border:none;
+  background:#f1f5f9;
+  color:#0f172a;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:18px;
+  cursor:pointer;
+  transition:.25s;
+}
+
+.header-toggle:hover{
+  background:var(--primary);
+  color:white;
+}
+
+.header-title{
+  font-size:18px;
+  font-weight:700;
+  color:var(--dark);
+}
+
+/* RIGHT */
+.header-right{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+.header-user{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:6px 10px;
+  border-radius:14px;
+  transition:.25s;
+}
+
+.header-user:hover{
+  background:#f1f5f9;
+}
+
+.header-user span{
+  font-weight:600;
+  font-size:14px;
+  color:#334155;
+}
+
+.header-user img{
   width:38px;
   height:38px;
   border-radius:50%;
-  border:2px solid var(--primary);
-}
-
-/* =====================
-   CONTENT
-===================== */
-.content{
-  margin-left:260px;
-  padding:100px 30px 30px;
-}
-
-/* =====================
-   CARD EFFECT
-===================== */
-.card-dashboard{
-  border-radius:20px;
-  box-shadow:0 20px 40px rgba(0,0,0,.1);
-  transition:.4s;
-}
-.card-dashboard:hover{
-  transform:translateY(-6px);
-  box-shadow:0 30px 60px rgba(0,0,0,.15);
+  border:2px solid #e5e7eb;
 }
 </style>
 </head>
+
 <body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-left">
+    <button class="header-toggle" onclick="toggleSidebar()" title="Toggle Sidebar">
+      <i class="bi bi-layout-sidebar-inset"></i>
+    </button>
+    <div class="header-title">Dashboard</div>
+  </div>
+
+  <div class="header-right">
+    <div class="header-user">
+      <span>Admin</span>
+      <img src="https://ui-avatars.com/api/?name=Admin" alt="Admin">
+    </div>
+  </div>
+</header>
