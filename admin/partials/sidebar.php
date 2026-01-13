@@ -69,7 +69,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
     <span>Manajemen P2</span>
   </a>
 
-  <a href="#" class="menu-item">
+  <a href="manajemen_q2cp.php" class="menu-item">
     <i class="bi bi-clipboard-data"></i>
     <span>Manajemen Q2CP</span>
   </a>
