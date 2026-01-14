@@ -2,17 +2,26 @@
 session_start();
 require "../koneksi.php";
 
+/* ambil daftar daerah */
+$daerahList = $pdo->query("SELECT * FROM daerah ORDER BY nama_daerah")->fetchAll();
+
 $error = "";
 $success = "";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $username = trim($_POST['username']);
-    $password = $_POST['password'];
-    $confirm  = $_POST['confirm'];
+    $username  = trim($_POST['username']);
+    $password  = $_POST['password'];
+    $confirm   = $_POST['confirm'];
+    $role      = $_POST['role'];
+    $daerah_id = $_POST['daerah_id'] ?? null; // ← WAJIB ADA
 
     if ($password !== $confirm) {
         $error = "Konfirmasi password tidak cocok!";
-    } else {
+    } 
+    elseif ($role === 'user' && empty($daerah_id)) {
+        $error = "Daerah wajib dipilih untuk user!";
+    } 
+    else {
         $cek = $pdo->prepare("SELECT id FROM users WHERE username = ?");
         $cek->execute([$username]);
 
@@ -20,11 +29,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $error = "Username sudah digunakan!";
         } else {
             $hash = password_hash($password, PASSWORD_DEFAULT);
+
+            /* ===== INI TEMPATNYA ===== */
             $stmt = $pdo->prepare(
-                "INSERT INTO users (username, password, role) VALUES (?, ?, 'user')"
+                "INSERT INTO users (username, password, role, daerah_id)
+                 VALUES (?, ?, ?, ?)"
             );
 
-            if ($stmt->execute([$username, $hash])) {
+            if ($stmt->execute([$username, $hash, $role, $daerah_id])) {
                 $success = "Akun berhasil dibuat. Mengalihkan ke login...";
                 header("refresh:2;url=login.php");
             } else {
@@ -34,6 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -241,6 +254,27 @@ button:hover {
                 <input type="password" name="confirm" placeholder="Ulangi password" required>
             </div>
 
+            <div class="form-group">
+                <label>Daftar Sebagai</label>
+                <select name="role" required
+                    style="width:100%;padding:14px;border-radius:10px;border:1px solid #ddd;font-size:15px;">
+                    <option value="">-- Pilih Role --</option>
+                    <option value="admin">Admin</option>
+                    <option value="user">User</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="daerahBox" style="display:none">
+                <label>Daerah</label>
+                <select name="daerah_id"
+                    style="width:100%;padding:14px;border-radius:10px;border:1px solid #ddd;font-size:15px;">
+                    <option value="">-- Pilih Daerah --</option>
+                    <?php foreach ($daerahList as $d): ?>
+                        <option value="<?= $d['id'] ?>"><?= $d['nama_daerah'] ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
             <button type="submit" id="btnRegister">Daftar</button>
         </form>
 
@@ -262,6 +296,19 @@ const btn = document.getElementById("btnRegister");
 document.querySelector("form").addEventListener("submit", () => {
     btn.disabled = true;
     btn.innerHTML = "Membuat akun...";
+});
+</script>
+
+<script>
+const roleSelect = document.querySelector("select[name='role']");
+const daerahBox  = document.getElementById("daerahBox");
+
+roleSelect.addEventListener("change", function () {
+    if (this.value === "user") {
+        daerahBox.style.display = "block";
+    } else {
+        daerahBox.style.display = "none";
+    }
 });
 </script>
 

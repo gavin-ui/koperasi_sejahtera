@@ -2,14 +2,22 @@
 session_start();
 require "../koneksi.php";
 
-if (isset($_SESSION['login'])) {
-    header("Location: ../admin/index.php");
+/* ================= CEK SUDAH LOGIN ================= */
+if (isset($_SESSION['login']) && isset($_SESSION['role'])) {
+
+    if ($_SESSION['role'] === 'admin') {
+        header("Location: ../admin/index.php");
+    } else {
+        header("Location: ../user/index.php");
+    }
     exit;
 }
 
 $error = "";
 
+/* ================= PROSES LOGIN ================= */
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
+
     $username = $_POST['username'];
     $password = $_POST['password'];
 
@@ -18,16 +26,28 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $user = $stmt->fetch();
 
     if ($user && password_verify($password, $user['password'])) {
-        $_SESSION['login'] = true;
-        $_SESSION['user']  = $user['username'];
-        $_SESSION['role']  = $user['role'];
-        header("Location: ../admin/index.php");
+
+        $_SESSION['login']     = true;
+        $_SESSION['id']        = $user['id'];
+        $_SESSION['username'] = $user['username'];
+        $_SESSION['role']     = $user['role'];
+        $_SESSION['daerah_id']= $user['daerah_id'];
+
+
+        /* ===== REDIRECT BERDASARKAN ROLE ===== */
+        if ($user['role'] === 'admin') {
+            header("Location: ../admin/index.php");
+        } else {
+            header("Location: ../user/index.php");
+        }
         exit;
+
     } else {
         $error = "Username atau password salah!";
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
